@@ -63,14 +63,9 @@ router.post('/', inputValidation, (req, res, next)=>{
     })
 })
 
-router.put('/:id', (req, res, next)=>{
+router.put('/:id', updateInputValidation, (req, res, next)=>{
   NoteModel
-    .findOneAndUpdate({ _id: req.params.id }, {
-      title: req.body.title,
-      body: req.body.body
-    }, {
-      new: true
-    })
+    .findOneAndUpdate({ _id: req.params.id }, req.updateObj, {new: true})
     .then((results)=>{
       if(!results) {
         res
@@ -127,6 +122,23 @@ function inputValidation(req, res, next) {
   } else {
     next()
   }
+}
+
+function updateInputValidation(req, res, next) {
+  const { title, body } = req.body
+  const updateObj = {}
+
+  if(title) {
+    updateObj.title = title
+  }
+
+  if(body) {
+    updateObj.body = body
+  }
+
+  req.updateObj = updateObj
+
+  next()
 }
 
 module.exports = router
