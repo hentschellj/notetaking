@@ -9,7 +9,7 @@ router.get('/:id', (req, res, next)=>{
   res.send('Get note by id')
 })
 
-router.post('/', (req, res, next)=>{
+router.post('/', inputValidation, (req, res, next)=>{
   const newNote = new NoteModel({
     title: req.body.title,
     body: req.body.body
@@ -36,5 +36,26 @@ router.put('/:id', (req, res, next)=>{
 router.delete('/:id', (req, res, next)=>{
   res.send('Delete note')
 })
+
+function inputValidation(req, res, next) {
+  const { title, body } = req.body
+  const missingFields = []
+
+  if(!title) {
+    missingFields.push('title')
+  }
+
+  if(!body) {
+    missingFields.push('body')
+  }
+
+  if(missingFields.length) {
+    res
+      .status(400)
+      .send(`The following fields are missing: ${missingFields.join(', ')}`)
+  } else {
+    next()
+  }
+}
 
 module.exports = router
