@@ -11,8 +11,8 @@ router.get('/:id', (req, res, next)=>{
 
 router.post('/', (req, res, next)=>{
   const newNote = new NoteModel({
-    title: 'New Note',
-    body: 'This is a new note'
+    title: req.body.title,
+    body: req.body.body
   })
   newNote
     .save()
