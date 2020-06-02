@@ -22,7 +22,7 @@ router.get('/:id', (req, res, next)=>{
     })
 })
 
-router.post('/register', (req, res, next)=>{
+router.post('/register', registrationInputValidation, (req, res, next)=>{
   const newUser = new UserModel({
     firstName: req.body.firstName,
     lastName: req.body.lastName,
@@ -50,5 +50,34 @@ router.post('/register', (req, res, next)=>{
 router.post('/login', (req, res, next)=>{
   res.send('Login')
 })
+
+function registrationInputValidation(req, res, next) {
+  const { firstName, lastName, email, password } = req.body
+  const missingFields = []
+
+  if(!firstName) {
+    missingFields.push('firstName')
+  }
+
+  if(!lastName) {
+    missingFields.push('lastName')
+  }
+
+  if(!email) {
+    missingFields.push('email')
+  }
+
+  if(!password) {
+    missingFields.push('password')
+  }
+
+  if(missingFields.length) {
+    res
+      .status(400)
+      .send(`The following fields are missing: ${missingFields.join(', ')}`)
+  } else {
+    next()
+  }
+}
 
 module.exports = router
