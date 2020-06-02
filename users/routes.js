@@ -22,7 +22,7 @@ router.get('/:id', (req, res, next)=>{
     })
 })
 
-router.post('/register', registrationInputValidation, (req, res, next)=>{
+router.post('/register', registrationInputValidation, isEmailTaken, (req, res, next)=>{
   const newUser = new UserModel({
     firstName: req.body.firstName,
     lastName: req.body.lastName,
@@ -78,6 +78,27 @@ function registrationInputValidation(req, res, next) {
   } else {
     next()
   }
+}
+
+function isEmailTaken(req, res, next) {
+  const { email } = req.body
+  UserModel
+    .findOne({ email })
+    .then((result)=>{
+      if(result) {
+        res
+          .status(400)
+          .send(`${email} is already taken`)
+      } else {
+        next()
+      }
+    })
+    .catch((err)=>{
+      console.log(err)
+      res
+        .status(500)
+        .send('Error Occurred')
+    })
 }
 
 module.exports = router
