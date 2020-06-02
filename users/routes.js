@@ -1,4 +1,5 @@
 const router = require('express').Router()
+const bcrypt = require('bcryptjs')
 const UserModel = require('./model')
 
 router.get('/:id', (req, res, next)=>{
@@ -22,7 +23,8 @@ router.get('/:id', (req, res, next)=>{
     })
 })
 
-router.post('/register', registrationInputValidation, isEmailTaken, (req, res, next)=>{
+router.post('/register', registrationInputValidation, isEmailTaken, hashPassword, (req, res, next)=>{
+  console.log(req.body.password)
   const newUser = new UserModel({
     firstName: req.body.firstName,
     lastName: req.body.lastName,
@@ -99,6 +101,23 @@ function isEmailTaken(req, res, next) {
         .status(500)
         .send('Error Occurred')
     })
+}
+
+function hashPassword(req, res, next) {
+  const { password } = req.body
+
+  bcrypt.genSalt(10, function(err, salt) {
+    bcrypt.hash(password, salt, function(err, passwordHash) {
+      if(err) {
+        res
+          .status(500)
+          .send('Error')
+      } else {
+        req.body.password = passwordHash
+        next()
+      }
+    })
+  })
 }
 
 module.exports = router
