@@ -68,7 +68,23 @@ router.put('/:id', (req, res, next)=>{
 })
 
 router.delete('/:id', (req, res, next)=>{
-  res.send('Delete note')
+  NoteModel
+    .findOneAndRemove({ _id: req.params.id })
+    .then((results)=>{
+      if(!results) {
+        res
+          .status(404)
+          .send('No note found')
+      } else {
+        res.send('Successfully deleted')
+      }
+    })
+    .catch((err)=>{
+      console.log(err)
+      res
+        .status(500)
+        .send('Error Occurred')
+    })
 })
 
 function inputValidation(req, res, next) {
