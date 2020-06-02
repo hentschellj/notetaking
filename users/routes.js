@@ -49,7 +49,7 @@ router.post('/register', registrationInputValidation, isEmailTaken, hashPassword
     })
 })
 
-router.post('/login', (req, res, next)=>{
+router.post('/login', loginInputValidation, findUser, checkPassword, provideAccess, (req, res, next)=>{
   res.send('Login')
 })
 
@@ -118,6 +118,39 @@ function hashPassword(req, res, next) {
       }
     })
   })
+}
+
+function loginInputValidation(req, res, next) {
+  const { email, password } = req.body
+  const missingFields = []
+
+  if(!email) {
+    missingFields.push('email')
+  }
+
+  if(!password) {
+    missingFields.push('password')
+  }
+
+  if(missingFields.length) {
+    res
+      .status(400)
+      .send(`The following fields are missing: ${missingFields.join(', ')}`)
+  } else {
+    next()
+  }
+}
+
+function findUser(req, res, next) {
+  next()
+}
+
+function checkPassword(req, res, next) {
+  next()
+}
+
+function provideAccess(req, res, next) {
+  res.send('Successful Login')
 }
 
 module.exports = router
