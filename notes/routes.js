@@ -2,11 +2,43 @@ const router = require('express').Router()
 const NoteModel = require('./model')
 
 router.get('/', (req, res, next)=>{
-  res.send('Get all notes')
+  NoteModel
+    .find()
+    .then((results)=>{
+      if(!results) {
+        res
+          .status(404)
+          .send('No notes found')
+      } else {
+        res.json(results)
+      }
+    })
+    .catch((err)=>{
+      console.log(err)
+      res
+        .status(500)
+        .send('Error Occurred')
+    })
 })
 
 router.get('/:id', (req, res, next)=>{
-  res.send('Get note by id')
+  NoteModel
+    .findById(req.params.id)
+    .then((results)=>{
+      if(!results) {
+        res
+          .status(404)
+          .send('No note found')
+      } else {
+        res.json(results)
+      }
+    })
+    .catch((err)=>{
+      console.log(err)
+      res
+        .status(500)
+        .send('Error Occurred')
+    })
 })
 
 router.post('/', inputValidation, (req, res, next)=>{
@@ -25,7 +57,9 @@ router.post('/', inputValidation, (req, res, next)=>{
     })
     .catch((err)=>{
       console.log(err)
-      res.send('Error Occurred')
+      res
+        .status(500)
+        .send('Error Occurred')
     })
 })
 
