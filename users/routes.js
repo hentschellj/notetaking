@@ -165,7 +165,23 @@ function findUser(req, res, next) {
 }
 
 function checkPassword(req, res, next) {
-  next()
+  const hashPassword = req.userDocument.password
+  const { password } = req.body
+
+  bcrypt.compare(password, hashPassword, function(err, isPasswordCorrect) {
+    if(err) {
+      console.log(err)
+      res
+        .status(500)
+        .send('Error Occurred')
+    } else if(isPasswordCorrect) {
+      next()
+    } else {
+      res
+        .status(400)
+        .send('Password is incorrect')
+    }
+  })
 }
 
 function provideAccess(req, res, next) {
