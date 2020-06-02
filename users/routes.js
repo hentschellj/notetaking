@@ -1,6 +1,8 @@
 const router = require('express').Router()
 const bcrypt = require('bcryptjs')
+const Chance = require('chance')
 const UserModel = require('./model')
+const chance = new Chance()
 
 router.get('/:id', (req, res, next)=>{
   UserModel
@@ -49,9 +51,7 @@ router.post('/register', registrationInputValidation, isEmailTaken, hashPassword
     })
 })
 
-router.post('/login', loginInputValidation, findUser, checkPassword, provideAccess, (req, res, next)=>{
-  res.send('Login')
-})
+router.post('/login', loginInputValidation, findUser, checkPassword, provideAccess)
 
 function registrationInputValidation(req, res, next) {
   const { firstName, lastName, email, password } = req.body
@@ -185,7 +185,26 @@ function checkPassword(req, res, next) {
 }
 
 function provideAccess(req, res, next) {
-  res.send(req.userDocument)
+  const accessToken = chance.guid()
+
+  req.userDocument.accessToken = accessToken
+  req.userDocument
+    .save()
+    .then((result)=>{
+      if(result) {
+        res.send(accessToken)
+      } else {
+        res
+          .status(400)
+          .send('Error')
+      }
+    })
+    .catch((err)=>{
+      console.log(err)
+      res
+        .status(500)
+        .send('Error Occurred')
+    })
 }
 
 module.exports = router
