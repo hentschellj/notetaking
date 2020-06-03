@@ -1,7 +1,21 @@
 const router = require('express').Router()
+const passport = require('passport')
+const BearerStrategy = require('passport-http-bearer')
 const NoteModel = require('./model')
 
-router.get('/', (req, res, next)=>{
+passport.use(new BearerStrategy(
+  function(token, done) {
+    console.log(token)
+    // done(err)
+    if(token === 'correct') {
+      return done(null, true)
+    } else {
+      return done(null, false)
+    }
+  }
+));
+
+router.get('/', passport.authenticate('bearer', { session: false }), (req, res, next)=>{
   NoteModel
     .find()
     .then((results)=>{
