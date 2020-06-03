@@ -2,7 +2,7 @@ const router = require('express').Router()
 const NoteModel = require('./model')
 const passport = require('../auth')
 
-router.get('/', passport.authenticate('bearer', { session: false }), (req, res, next)=>{
+router.get('/', (req, res, next)=>{
   NoteModel
     .find()
     .then((results)=>{
@@ -42,7 +42,7 @@ router.get('/:id', (req, res, next)=>{
     })
 })
 
-router.post('/', inputValidation, (req, res, next)=>{
+router.post('/', passport.authenticate('bearer', { session: false }), inputValidation, (req, res, next)=>{
   const newNote = new NoteModel({
     title: req.body.title,
     body: req.body.body
@@ -64,7 +64,7 @@ router.post('/', inputValidation, (req, res, next)=>{
     })
 })
 
-router.put('/:id', updateInputValidation, (req, res, next)=>{
+router.put('/:id', passport.authenticate('bearer', { session: false }), updateInputValidation, (req, res, next)=>{
   NoteModel
     .findOneAndUpdate({ _id: req.params.id }, req.updateObj, {new: true})
     .then((results)=>{
@@ -84,7 +84,7 @@ router.put('/:id', updateInputValidation, (req, res, next)=>{
     })
 })
 
-router.delete('/:id', (req, res, next)=>{
+router.delete('/:id', passport.authenticate('bearer', { session: false }), (req, res, next)=>{
   NoteModel
     .findOneAndRemove({ _id: req.params.id })
     .then((results)=>{
