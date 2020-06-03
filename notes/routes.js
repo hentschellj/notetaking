@@ -45,7 +45,8 @@ router.get('/:id', (req, res, next)=>{
 router.post('/', passport.authenticate('bearer', { session: false }), inputValidation, (req, res, next)=>{
   const newNote = new NoteModel({
     title: req.body.title,
-    body: req.body.body
+    body: req.body.body,
+    authId: req.user._id
   })
   newNote
     .save()

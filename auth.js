@@ -8,7 +8,7 @@ passport.use(new BearerStrategy(
       .findOne({ accessToken })
       .then((foundUser)=>{
         if(foundUser) {
-          return done(null, true)
+          return done(null, foundUser)
         } else {
           return done(null, false)
         }

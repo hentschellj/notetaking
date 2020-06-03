@@ -15,6 +15,11 @@ const noteSchema = new Schema({
     type: Date,
     required: true,
     default: new Date()
+  },
+  authId: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
   }
 })
 
