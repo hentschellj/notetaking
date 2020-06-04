@@ -5,9 +5,11 @@ const noteRoutes = require('./notes/routes')
 const userRoutes = require('./users/routes')
 
 const app = express()
-const PORT = 4000
+const PORT = process.env.PORT || 4000
 
-mongoose.connect('mongodb://localhost/notetaking', {useNewUrlParser: true});
+const { username, password } = process.env
+
+mongoose.connect(`mongodb://${username}:${password}@ds251112.mlab.com:51112/notetaking`);
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
